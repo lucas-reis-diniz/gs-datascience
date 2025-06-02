@@ -1,46 +1,48 @@
 import streamlit as st
 import pandas as pd
 import os
+from io import StringIO
 
 st.set_page_config(page_title="Visão Geral dos Dados", page_icon="📊", layout="wide")
 
-st.markdown("# Visão Geral dos Dados")
+st.markdown("# 📊 Visão Geral dos Dados")
 st.sidebar.header("Visão Geral")
 st.write("""
 Nesta página, carregamos o conjunto de dados de incêndios florestais e apresentamos uma visão geral inicial,
-incluindo as primeiras linhas, informações sobre os tipos de dados e estatísticas descritivas básicas.
+com uma amostra dos dados, tipos de colunas e estatísticas descritivas.
 """)
 
 # Função para carregar os dados
 @st.cache_data
-def load_data(file_path):
-    if os.path.exists(file_path):
-        return pd.read_csv(file_path)
+def load_data():
+    path = "data/wildfires.csv"
+    if os.path.exists(path):
+        try:
+            df = pd.read_csv(path)
+            return df
+        except Exception as e:
+            st.error(f"Erro ao carregar o arquivo: {e}")
+            return pd.DataFrame()
     else:
-        st.error(f"Erro: Arquivo de dados não encontrado em {file_path}")
-        return None
-
-# Caminho para o arquivo de dados
-data_path = "data/wildfires.csv"
+        st.error("Arquivo 'wildfires.csv' não encontrado na pasta 'data'.")
+        return pd.DataFrame()
 
 # Carrega os dados
-df = load_data(data_path)
+df = load_data()
 
-if df is not None:
-    st.subheader("Amostra dos Dados")
+if df.empty:
+    st.warning("Não foi possível carregar os dados.")
+else:
+    st.subheader("📄 Amostra dos Dados")
+    st.write("Visualize abaixo as primeiras linhas do conjunto de dados:")
     st.dataframe(df.head())
 
-    st.subheader("Informações Gerais")
-    st.text("Informações sobre os tipos de dados e valores não nulos:")
-    # Captura a saída de df.info()
-    from io import StringIO
+    st.subheader("🔢 Tipos de Dados e Valores Ausentes")
     buffer = StringIO()
     df.info(buf=buffer)
-    s = buffer.getvalue()
-    st.text(s)
+    info_str = buffer.getvalue()
+    st.text(info_str)
 
-    st.subheader("Estatísticas Descritivas")
+    st.subheader("📊 Estatísticas Descritivas")
+    st.write("Resumo estatístico das colunas numéricas:")
     st.dataframe(df.describe())
-else:
-    st.warning("Não foi possível carregar os dados. Verifique se o arquivo 'wildfires.csv' está na pasta 'data'.")
-
