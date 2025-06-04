@@ -51,7 +51,7 @@ else:
     fig_cat = px.histogram(df_filtrado, x="FIRE_SIZE_BIN", 
                         title="Distribuição de Tamanho dos Incêndios por Faixa",
                         labels={"FIRE_SIZE_BIN": "Faixa de Tamanho"},
-                        color_discrete_sequence=["orange"])
+                        color_discrete_sequence=["size"])
     st.plotly_chart(fig_cat, use_container_width=True)
 
     # 🔹 Causas gerais
