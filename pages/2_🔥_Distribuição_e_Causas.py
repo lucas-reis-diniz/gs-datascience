@@ -36,24 +36,23 @@ else:
     st.subheader("📏 Tamanho dos Incêndios")
     st.write("A maioria dos incêndios é pequena, mas existem eventos extremos. Usamos escala logarítmica para visualizar melhor.")
 
-    # Garantir tipo numérico
+        # Garantir valores positivos
     df["FIRE_SIZE"] = pd.to_numeric(df["FIRE_SIZE"], errors="coerce")
+    df_filtrado = df[df["FIRE_SIZE"] > 0]
 
-    # Remover zeros e outliers exagerados
-    df_filtrado = df[(df["FIRE_SIZE"] > 0) & (df["FIRE_SIZE"] < 1000)]
+    # Criar categorias de tamanho
+    bins = [0, 1, 10, 100, 1000, 10000, df_filtrado["FIRE_SIZE"].max()]
+    labels = ['<1 acre', '1-10 acres', '10-100 acres', '100-1.000 acres', '1.000-10.000 acres', '10.000+ acres']
+    df_filtrado["FIRE_SIZE_BIN"] = pd.cut(df_filtrado["FIRE_SIZE"], bins=bins, labels=labels)
 
-    # Mostrar dados para validação
-    st.write("Número de incêndios válidos:", len(df_filtrado))
+    # Plotar gráfico de barras por categoria
+    import plotly.express as px
 
-    # Plotar
-    fig_size = px.histogram(df_filtrado,
-                            x="FIRE_SIZE",
-                            nbins=30,
-                            log_x=True,
-                            title="Distribuição do Tamanho dos Incêndios",
-                            labels={"FIRE_SIZE": "Tamanho do Incêndio (acres)"})
-    fig_size.update_layout(height=500)
-    st.plotly_chart(fig_size, use_container_width=True)
+    fig_cat = px.histogram(df_filtrado, x="FIRE_SIZE_BIN", 
+                        title="Distribuição de Tamanho dos Incêndios por Faixa",
+                        labels={"FIRE_SIZE_BIN": "Faixa de Tamanho"},
+                        color_discrete_sequence=["orange"])
+    st.plotly_chart(fig_cat, use_container_width=True)
 
     # 🔹 Causas gerais
     st.subheader("📌 Causas Gerais")
