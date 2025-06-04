@@ -36,9 +36,15 @@ else:
     st.subheader("📏 Tamanho dos Incêndios")
     st.write("A maioria dos incêndios é pequena, mas existem eventos extremos. Usamos escala logarítmica para visualizar melhor.")
     
-    fig_size = px.histogram(df[df["FIRE_SIZE"] > 0], x="FIRE_SIZE", nbins=50, log_x=True,
+    df_filtrado = df[df["FIRE_SIZE"] > 0]
+
+    fig_size = px.histogram(df_filtrado, 
+                            x="FIRE_SIZE", 
+                            nbins=30, 
+                            log_x=True,
                             title="Distribuição do Tamanho dos Incêndios",
                             labels={"FIRE_SIZE": "Tamanho do Incêndio (acres)"})
+    fig_size.update_layout(height=500)
     st.plotly_chart(fig_size, use_container_width=True)
 
     # 🔹 Causas gerais
