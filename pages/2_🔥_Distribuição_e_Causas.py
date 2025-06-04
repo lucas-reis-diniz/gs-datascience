@@ -35,12 +35,20 @@ else:
     # 🔹 Distribuição dos tamanhos dos incêndios
     st.subheader("📏 Tamanho dos Incêndios")
     st.write("A maioria dos incêndios é pequena, mas existem eventos extremos. Usamos escala logarítmica para visualizar melhor.")
-    
-    df_filtrado = df[df["FIRE_SIZE"] > 0]
 
-    fig_size = px.histogram(df_filtrado, 
-                            x="FIRE_SIZE", 
-                            nbins=30, 
+    # Garantir tipo numérico
+    df["FIRE_SIZE"] = pd.to_numeric(df["FIRE_SIZE"], errors="coerce")
+
+    # Remover zeros e outliers exagerados
+    df_filtrado = df[(df["FIRE_SIZE"] > 0) & (df["FIRE_SIZE"] < 1000)]
+
+    # Mostrar dados para validação
+    st.write("Número de incêndios válidos:", len(df_filtrado))
+
+    # Plotar
+    fig_size = px.histogram(df_filtrado,
+                            x="FIRE_SIZE",
+                            nbins=30,
                             log_x=True,
                             title="Distribuição do Tamanho dos Incêndios",
                             labels={"FIRE_SIZE": "Tamanho do Incêndio (acres)"})
