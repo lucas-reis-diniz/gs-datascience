@@ -51,10 +51,7 @@ else:
     fig_cat = px.histogram(df_filtrado, x="FIRE_SIZE_BIN", 
                         title="Distribuição de Tamanho dos Incêndios por Faixa",
                         labels={"FIRE_SIZE_BIN": "Faixa de Tamanho"},
-                        color_discrete_sequence=["cian", "darkorange", "firebrick"])
-    fig_cat.update_layout(xaxis_title="Faixa de Tamanho (acres)", yaxis_title="Número de Incêndios")
-    fig_cat.update_xaxes(categoryorder="total descending")
-    st.write("A distribuição dos tamanhos dos incêndios mostra que a maioria é pequena, mas há eventos extremos significativos.")
+                        color_discrete_sequence=["orange"])
     st.plotly_chart(fig_cat, use_container_width=True)
 
     # 🔹 Causas gerais
